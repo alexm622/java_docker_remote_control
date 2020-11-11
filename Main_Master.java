@@ -1,9 +1,8 @@
 import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
-import java.io.file.Path;
 
-class Main{
+class Master{
     final static int NUM_ARGS = 5;
     public Socket s;
     public InputStream in;
@@ -57,8 +56,13 @@ class Main{
                     System.out.println("the port needs to be in numerical form");
                     throw new Error();
                 }
+                try{
+                    ArrayList<String> hosts = readFromFile(f);
+                }catch(Exception e){
+                    System.out.println("something is wrong with the file");
+                    throw new Error();
+                }
                 
-                ArrayList<String> hosts = new ArrayList<>();
 
 
 
@@ -72,6 +76,24 @@ class Main{
             //dop nothing
         }
 
+    }
 
+    private static ArrayList<String> readFromFile(File f) throws IOException {
+        ArrayList<String> contents;
+        try(BufferedReader r = new BufferedReader(new FileReader(f))){
+            contents = new ArrayList<>();
+
+            
+            String line = r.readLine();
+            while(line != null){
+                contents.add(line);
+
+                line = r.readLine();
+            }
+        }catch(IOException e){
+            throw e;
+        }
+
+        return contents;
     }
 }
