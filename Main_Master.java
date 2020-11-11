@@ -4,9 +4,6 @@ import java.io.*;
 
 class Master{
     final static int NUM_ARGS = 5;
-    public Socket s;
-    public InputStream in;
-    public OutputStream out;
     //docker run --net=pub_net -d --ip=10.0.0.201 --hostname="test"  --name="remote-desktop" --rm --name="remote-desktop" scottyhardy/docker-remote-desktop
     public static void main(String[] args) {
         // check if length of args array is 
@@ -96,4 +93,44 @@ class Master{
 
         return contents;
     }
+
+}
+
+class Connect{
+    private String ip, token, startingIp;
+    private int port, count;
+    private Socket s;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+
+    public Connect(String ip, int port, String token, String startingIp, int count){
+        this.ip = ip;
+        this.port = port;
+        this.token = token;
+        this.startingIp = startingIp;
+        this.count = count;
+        
+        start();
+    }
+
+    private void start(){
+        try{
+            s = new Socket(ip, port);
+            in = new ObjectInputStream(s.getInputStream());
+            out = new ObjectOutputStream(s.getOutputStream());
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
+    }
+}
+
+class Message implements Serializable{
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 123645;
+    
 }
