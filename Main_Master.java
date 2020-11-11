@@ -53,15 +53,28 @@ class Master{
                     System.out.println("the port needs to be in numerical form");
                     throw new Error();
                 }
+                ArrayList<String> hosts;
                 try{
-                    ArrayList<String> hosts = readFromFile(f);
+                    hosts = readFromFile(f);
                 }catch(Exception e){
                     System.out.println("something is wrong with the file");
                     throw new Error();
                 }
-                
+                int rem;
+                int count;
+                rem = containers % hosts.size();
+                count = (containers - rem)/hosts.size();
+                for(String s : hosts){
+                    int temp = count;
+                    if(rem > 0){
+                        temp++;
+                        rem--;
+                    }                    
+                    
 
-
+                    Connect c = new Connect(s, port, secret, startIp, temp);
+                    startIp = c.start();
+                }
 
             } 
             else
@@ -110,19 +123,76 @@ class Connect{
         this.startingIp = startingIp;
         this.count = count;
         
-        start();
     }
 
-    private void start(){
+    public String start(){
         try{
             s = new Socket(ip, port);
             in = new ObjectInputStream(s.getInputStream());
             out = new ObjectOutputStream(s.getOutputStream());
 
+            
+
+            out.writeObject(new Message(Operation.LOGIN, new String[]{token}));
+            Message m = (Message) in.readObject();
+            if(m.o == Operation.FAIL){
+                throw new Error();
+            }
+            String temp = startingIp;
+            for(int i = 0; i < count; i++){
+                out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
+                m = (Message) in.readObject();
+                if(m.o == Operation.FAIL){
+                    throw new Error();
+                }
+                temp = Utils.nextIp(temp);
+            }
+
+            return temp;
+
         }catch(Exception e){
             e.printStackTrace();
         }
+        return startingIp;
         
+    }
+}
+
+class Utils{
+
+    private Utils(){
+        //this is gonna stay empty
+    }
+
+    public static String nextIp(String ip){
+        String[] bytes = ip.split(".");
+        byte b = Byte.parseByte(bytes[3]);
+        b++;
+        if(b == 0){
+            bytes[3] = Byte.toString(b);
+            b = Byte.parseByte(bytes[2]);
+            b++;
+            if(b == 0){
+                bytes[2] = Byte.toString(b);
+                b = Byte.parseByte(bytes[1]);
+                b++;
+                if(b == 0){
+                    bytes[1] = Byte.toString(b);
+                    b = Byte.parseByte(bytes[1]);
+                    b++;
+                    bytes[0] = Byte.toString(b);
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(bytes[0]);
+        sb.append(".");
+        sb.append(bytes[1]);
+        sb.append(".");
+        sb.append(bytes[2]);
+        sb.append(".");
+        sb.append(bytes[3]);
+        return sb.toString();
     }
 }
 
@@ -132,5 +202,20 @@ class Message implements Serializable{
      *
      */
     private static final long serialVersionUID = 123645;
-    
+    public Operation o;
+    public String[] args;
+    public Message(Operation o, String[] args){
+        this.o = o;
+        this.args = args;
+    }
+
+}
+
+enum Operation{
+    LOGIN,
+    CREATE,
+    SUCCESS,
+    FAIL,
+    DISCONNECT,
+    STATUS;
 }
