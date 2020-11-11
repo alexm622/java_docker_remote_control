@@ -1,5 +1,5 @@
 class Main{
-    final int NUM_ARGS = 1;
+    final static int NUM_ARGS = 2;
     //docker run --net=pub_net -d --ip=10.0.0.201 --hostname="test"  --name="remote-desktop" --rm --name="remote-desktop" scottyhardy/docker-remote-desktop
     public static void main(String[] args) {
         // check if length of args array is 
