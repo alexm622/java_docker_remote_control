@@ -147,7 +147,8 @@ class Connect{
                 }
                 temp = Utils.nextIp(temp);
             }
-
+            out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
+            s.close();
             return temp;
 
         }catch(Exception e){
