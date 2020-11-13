@@ -3,6 +3,9 @@
 import java.net.*;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import javax.swing.text.DefaultStyledDocument.ElementSpec;
+
 import java.io.*;
 
 class Master{
@@ -283,21 +286,26 @@ class Utils{
         System.out.println("ip is " + ip);
         String[] bytes = ip.split(Pattern.quote("."));
         System.out.println("bytes length " + bytes.length);
-        byte b = (byte) Integer.parseInt(bytes[3]);
+        int b =  Integer.parseInt(bytes[3]);
+        System.out.println("byte 3 is " + b);
+        System.out.println("byte 3 is " + b);
         b++;
-        if(b == 0){
-            bytes[3] = Byte.toString(b);
-            b = (byte) Integer.parseInt(bytes[2]);
+        bytes[3] = Integer.toString(b);
+        if(b >= 256){
+            bytes[3] = Integer.toString(0);
+            b =  Integer.parseInt(bytes[2]);
             b++;
-            if(b == 0){
-                bytes[2] = Byte.toString(b);
-                b = (byte) Integer.parseInt(bytes[1]);
+            bytes[2] = Integer.toString(b);
+            if(b >= 256){
+                bytes[2] = Integer.toString(0);
+                b =   Integer.parseInt(bytes[1]);
                 b++;
-                if(b == 0){
-                    bytes[1] = Byte.toString(b);
-                    b = (byte) Integer.parseInt(bytes[1]);
+                bytes[1] = Integer.toString(b);
+                if(b >= 256){
+                    bytes[1] = Integer.toString(0);
+                    b =  Integer.parseInt(bytes[1]);
                     b++;
-                    bytes[0] = Byte.toString(b);
+                    bytes[0] = Integer.toString(b);
                 }
             }
         }
