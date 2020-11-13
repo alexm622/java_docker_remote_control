@@ -63,7 +63,7 @@ class Main {
 class Server {
     private int port;
     private String token;
-    final String create = "docker run --net=pub_net -d --ip=$1 --hostname=\"$1\"  --name=\"remote-$1\" --rm scottyhardy/docker-remote-desktop &";
+    final String create = "docker run --net=pub_net -d --ip=$1 --hostname=\"$1\"  --name=\"remote-$1\" --rm scottyhardy/docker-remote-desktop ";
     final String destroy = "docker container stop $(docker container ls -q --filter name=remote*) &";
     public Server(int port, String token) {
         this.port = port;
@@ -120,7 +120,7 @@ class Server {
 
         String cmd = create.replaceAll(Pattern.quote("$1"), ip);
         Process process = Runtime.getRuntime().exec(cmd);
-        System.out.println(cmd);
+        System.out.println("the command is" + cmd);
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
             String line ="";
             while ((line = reader.readLine()) != null) {

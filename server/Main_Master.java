@@ -2,6 +2,7 @@
 
 import java.net.*;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 import java.io.*;
 
 class Master{
@@ -192,20 +193,22 @@ class Utils{
     }
 
     public static String nextIp(String ip){
-        String[] bytes = ip.split(".");
-        byte b = Byte.parseByte(bytes[3]);
+        System.out.println("ip is " + ip);
+        String[] bytes = ip.split(Pattern.quote("."));
+        System.out.println("bytes length " + bytes.length);
+        byte b = (byte) Integer.parseInt(bytes[3]);
         b++;
         if(b == 0){
             bytes[3] = Byte.toString(b);
-            b = Byte.parseByte(bytes[2]);
+            b = (byte) Integer.parseInt(bytes[2]);
             b++;
             if(b == 0){
                 bytes[2] = Byte.toString(b);
-                b = Byte.parseByte(bytes[1]);
+                b = (byte) Integer.parseInt(bytes[1]);
                 b++;
                 if(b == 0){
                     bytes[1] = Byte.toString(b);
-                    b = Byte.parseByte(bytes[1]);
+                    b = (byte) Integer.parseInt(bytes[1]);
                     b++;
                     bytes[0] = Byte.toString(b);
                 }
