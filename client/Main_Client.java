@@ -106,7 +106,7 @@ class Server {
                         case DESTROY:
                             destroy();
                             System.out.println("destroyed");
-                            //oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));
+                            oo.writeObject(new Message(Operation.SUCCESS, new String[]{"DESTROYED"}));
                             break;
                         default:
                             break;
