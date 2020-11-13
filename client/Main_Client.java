@@ -117,7 +117,8 @@ class Server {
         String ip = m.args[0];
 
         boolean ret = true;
-
+        Process p = Runtime.getRuntime().exec("docker images");
+        p.waitFor();
         String cmd = create.replaceAll(Pattern.quote("$1"), ip);
         Process process = Runtime.getRuntime().exec(cmd);
         System.out.println("the command is" + cmd);
