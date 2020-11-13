@@ -287,10 +287,9 @@ class Utils{
     public static String nextIp(String ip){
         System.out.println("ip is " + ip);
         String[] bytes = ip.split(Pattern.quote("."));
-        System.out.println("bytes length " + bytes.length);
+        
         int b =  Integer.parseInt(bytes[3]);
-        System.out.println("byte 3 is " + b);
-        System.out.println("byte 3 is " + b);
+        
         b++;
         bytes[3] = Integer.toString(b);
         if(b >= 256){
