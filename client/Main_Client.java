@@ -139,7 +139,7 @@ class Server {
         throw new UnsupportedOperationException();
     }
 
-    private void destroy(){
+    private void destroy() throws IOException {
         String cmd = destroy;
         String[] exec = new String[] {"sh", "-c", cmd};
         Runtime rt = Runtime.getRuntime();
