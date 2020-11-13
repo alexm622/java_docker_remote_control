@@ -142,13 +142,14 @@ class Connect{
     public String start(){
         System.out.println("attempting to make first connection");
         try(Socket s = new Socket(ip, port)){
-            
+            System.out.println("connection accepted");
             in = new ObjectInputStream(s.getInputStream());
             out = new ObjectOutputStream(s.getOutputStream());
 
             
-
+            System.out.println("sending first message");
             out.writeObject(new Message(Operation.LOGIN, new String[]{token}));
+            System.out.println("message sent");
             Message m = (Message) in.readObject();
             if(m.o == Operation.FAIL){
                 throw new Error();
@@ -157,7 +158,7 @@ class Connect{
             for(int i = 0; i < count; i++){
                 out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
                 m = (Message) in.readObject();
-                System.out.println(m.args[[0]]);
+                System.out.println(m.args[0]);
                 if(m.o == Operation.FAIL){
                     throw new Error();
                 }
