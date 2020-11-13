@@ -64,7 +64,7 @@ class Server {
     private int port;
     private String token;
     final String create = "docker run --net=pub_net -d --ip=$1 --hostname=\"$1\"  --name=\"remote-$1\" --rm scottyhardy/docker-remote-desktop ";
-    final String destroy = "docker container stop $(docker container ls -q --filter name=remote*) &";
+    final String destroy = "docker container stop $(docker container ls -q --filter name=remote*)";
     public Server(int port, String token) {
         this.port = port;
         this.token = token;

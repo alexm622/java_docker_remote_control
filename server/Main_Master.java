@@ -25,10 +25,37 @@ class Master{
                     }
 
                     String token = args[2];
-                    int port = Integer.parseInt(args[3]);
-                    ArrayList<String> hosts = readFromFile(f);
+                    int port;
+                    try {
+                        port = Integer.parseInt(args[3]);
+                        if(port == 0){
+                            port = 3066;
+                            System.out.println("using default port of 3066");
+                        }
+                        else if(port <= 1023) {
+                            System.out.println("you are not allowed to use a port that is between 0-1023");
+                            throw new Error();
+                        }else if (port > 65535) {
+                            System.out.println("you cannot use a port that doesn't exist!");
+                            throw new Error();
+                        }else{
+                            System.out.println("using port " + port);
+                        }
+                    }catch(Exception e){
+                        System.out.println("the port needs to be in numerical form");
+                        throw new Error();
+                    }
+                    ArrayList<String> hosts;
+                    try{
+                        hosts = readFromFile(f);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        throw new Error();
+                    }
+                    
                     
                     for(String s : hosts){
+                        System.out.println("the ip is " + s );
                         Destroy d = new Destroy(s, token, port);
                         d.destroy();
                     }
