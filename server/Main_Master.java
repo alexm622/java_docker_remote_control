@@ -15,8 +15,24 @@ class Master{
         try{
             if (args.length == NUM_ARGS || (args.length >= 2 && args[0].equals("destroy"))) 
             { 
-                if(args.length >= 2 && args[0].equals("destroy")){
-                     //code to destroy all the instances
+                if(args.length >= 4 && args[0].equals("destroy")){
+                    File f;
+                    try {
+                        f = new File(args[1]);
+                    }catch(Exception e){
+                        System.out.println("invalid path");
+                        throw new Error();
+                    }
+
+                    String token = args[2];
+                    int port = Integer.parseInt(args[3]);
+                    ArrayList<String> hosts = readFromFile(f);
+                    
+                    for(String s : hosts){
+                        Destroy d = new Destroy(s, token, port);
+                        d.destroy();
+                    }
+
                 }else{
                     System.out.println("The command line arguments are:"); 
                     
@@ -186,6 +202,50 @@ class Connect{
     }
 }
 
+class Destroy{
+    private String ip;
+    private String token;
+    private int port;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    public Destroy(String ip, String token, int port){
+        this.ip = ip;
+        this.token = token;
+        this.port = port;
+    }
+
+    public void destroy(){
+        try(Socket s = new Socket(ip, port)){
+            if(s.isConnected()){
+                System.out.println("connection accepted");
+            }
+            System.out.println("getting output stream");
+            out = new ObjectOutputStream(s.getOutputStream());
+            System.out.println("got output stream");
+            
+            System.out.println("sending first message");
+            out.writeObject(new Message(Operation.LOGIN, new String[]{token}));
+            System.out.println("message sent");
+            in = new ObjectInputStream(s.getInputStream());
+            Message m = (Message) in.readObject();
+            if(m.o == Operation.FAIL){
+                throw new Error();
+            }
+
+            System.out.println("sending destroy message");
+            out.writeObject(new Message(Operation.DESTROY, new String[]{"none"}));
+            System.out.println("message sent");
+            in = new ObjectInputStream(s.getInputStream());
+            m = (Message) in.readObject();
+            if(m.o == Operation.FAIL){
+                throw new Error();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+
 class Utils{
 
     private Utils(){
@@ -247,5 +307,6 @@ enum Operation{
     SUCCESS,
     FAIL,
     DISCONNECT,
+    DESTROY,
     STATUS;
 }
