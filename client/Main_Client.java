@@ -104,10 +104,8 @@ class Server {
                             status(m);
                             break;
                         case DESTROY:
-                            oi = new ObjectInputStream(client.getInputStream());
-                            oo = new ObjectOutputStream(client.getOutputStream());
                             destroy();
-                            oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));
+                            System.out.println("destroyed");
                             //oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));
                             break;
                         default:

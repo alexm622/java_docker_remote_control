@@ -263,8 +263,10 @@ class Destroy{
             }
 
             System.out.println("sending destroy message");
+            
             out.writeObject(new Message(Operation.DESTROY, new String[]{"none"}));
             System.out.println("message sent");
+
             m = (Message) in.readObject();
             if(m.o == Operation.FAIL){
                 throw new Error();
