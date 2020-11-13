@@ -142,6 +142,7 @@ class Master{
             else
             {
                 System.out.println("format should be: [server list file path] [starting ip] [number of containers] [secret token] [port]"); 
+                System.out.println("or: destroy [server list file path] [secret token] [port]"); 
                 throw new Error();
             }
         }finally{
@@ -206,7 +207,7 @@ class Connect{
             }
             String temp = startingIp;
             
-            for(int i = 0; i <= count; i++){
+            for(int i = 0; i < count; i++){
                 out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
                 m = (Message) in.readObject();
                 System.out.println(m.args[0]);
