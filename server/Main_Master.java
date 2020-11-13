@@ -159,7 +159,7 @@ class Connect{
             }
             String temp = startingIp;
             
-            for(int i = 0; i < count; i++){
+            for(int i = 0; i <= count; i++){
                 out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
                 m = (Message) in.readObject();
                 System.out.println(m.args[0]);
@@ -167,6 +167,9 @@ class Connect{
                     throw new Error();
                 }
                 System.out.println("temp is " + temp);
+                if(i == count){
+                    break;
+                }
                 temp = Utils.nextIp(temp);
                 System.out.println("next ip is " + temp);
             }
