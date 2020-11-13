@@ -121,17 +121,9 @@ class Server {
         String cmd = create.replaceAll(Pattern.quote("$1"), ip);
         Process process = Runtime.getRuntime().exec(cmd);
         System.out.println("the command is" + cmd);
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
-            String line ="";
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }   
-        }catch(Exception e){
-            e.printStackTrace();
-            ret = false;
-        }
+        process.waitFor();
         
-        return ret;
+        return true;
     }
 
     private boolean status(Message m){
