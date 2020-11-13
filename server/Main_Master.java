@@ -157,6 +157,7 @@ class Connect{
             for(int i = 0; i < count; i++){
                 out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
                 m = (Message) in.readObject();
+                System.out.println(m.args[[0]]);
                 if(m.o == Operation.FAIL){
                     throw new Error();
                 }

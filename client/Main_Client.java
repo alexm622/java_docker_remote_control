@@ -91,10 +91,12 @@ class Server {
                     m = (Message) oi.readObject();
                     switch (m.o) {
                         case CREATE:
+                            System.out.println("attempting to create");
                             if(create(m)) {oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));}
                             else{oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));}
                             break;
                         case DISCONNECT:
+                            System.out.println("disconnecting");
                             client.close();
                             break;
                         case STATUS:
