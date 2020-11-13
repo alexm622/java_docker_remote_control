@@ -1,3 +1,5 @@
+
+
 import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
@@ -5,77 +7,90 @@ import java.io.*;
 class Master{
     final static int NUM_ARGS = 5;
     //docker run --net=pub_net -d --ip=10.0.0.201 --hostname="test"  --name="remote-desktop" --rm --name="remote-desktop" scottyhardy/docker-remote-desktop
+    //docker container stop $(docker container ls -q --filter name=remote*)
     public static void main(String[] args) {
         // check if length of args array is 
         // greater than 0 
         try{
-            if (args.length == NUM_ARGS) 
+            if (args.length == NUM_ARGS || (args.length >= 2 && args[0].equals("destroy"))) 
             { 
-                System.out.println("The command line arguments are:"); 
-                
-                //get path
-                File f;
-                int containers;
-                int port;
-                try {
-                    f = new File(args[0]);
-                }catch(Exception e){
-                    System.out.println("invalid path");
-                    throw new Error();
-                }
-                
-                //starting ip
-                String startIp = args[1];
-                
-                try {
-                    containers =  Integer.parseInt(args[2]);
-                }catch(Exception e){
-                    System.out.println("the number of containers needs to be in numerical form");
-                    throw new Error();
-                }
-                
-                
-                
-                //secret token
-                String secret = args[3];
-                
-                //port for server
-                try {
-                    port = Integer.parseInt(args[4]);
-                    if(port <= 1023) {
-                        System.out.println("you are not allowed to use a port that is between 0-1023");
-                        throw new Error();
-                    }else if (port > 65535) {
-                        System.out.println("you cannot use a port that doesn't exist!");
+                if(args.length >= 2 && args[0].equals("destroy")){
+                     //code to destroy all the instances
+                }else{
+                    System.out.println("The command line arguments are:"); 
+                    
+                    //get path
+                    File f;
+                    int containers;
+                    int port;
+                    try {
+                        f = new File(args[0]);
+                    }catch(Exception e){
+                        System.out.println("invalid path");
                         throw new Error();
                     }
-                }catch(Exception e){
-                    System.out.println("the port needs to be in numerical form");
-                    throw new Error();
-                }
-                ArrayList<String> hosts;
-                try{
-                    hosts = readFromFile(f);
-                }catch(Exception e){
-                    System.out.println("something is wrong with the file");
-                    throw new Error();
-                }
-                int rem;
-                int count;
-                rem = containers % hosts.size();
-                count = (containers - rem)/hosts.size();
-                for(String s : hosts){
-                    int temp = count;
-                    if(rem > 0){
-                        temp++;
-                        rem--;
-                    }                    
                     
+                    //starting ip
+                    String startIp = args[1];
+                    System.out.println("starting ip is " + startIp);
+                    
+                    try {
+                        containers =  Integer.parseInt(args[2]);
+                    }catch(Exception e){
+                        System.out.println("the number of containers needs to be in numerical form");
+                        throw new Error();
+                    }
+                    
+                    
+                    
+                    //secret token
+                    String secret = args[3];
 
-                    Connect c = new Connect(s, port, secret, startIp, temp);
-                    startIp = c.start();
+                    System.out.println("token is " + secret);
+                    
+                    //port for server
+                    try {
+                        port = Integer.parseInt(args[4]);
+                        if(port == 0){
+                            port = 3066;
+                            System.out.println("using default port of 3066");
+                        }
+                        else if(port <= 1023) {
+                            System.out.println("you are not allowed to use a port that is between 0-1023");
+                            throw new Error();
+                        }else if (port > 65535) {
+                            System.out.println("you cannot use a port that doesn't exist!");
+                            throw new Error();
+                        }else{
+                            System.out.println("using port " + port);
+                        }
+                    }catch(Exception e){
+                        System.out.println("the port needs to be in numerical form");
+                        throw new Error();
+                    }
+                    ArrayList<String> hosts;
+                    try{
+                        hosts = readFromFile(f);
+                    }catch(Exception e){
+                        System.out.println("something is wrong with the file");
+                        throw new Error();
+                    }
+                    int rem;
+                    int count;
+                    rem = containers % hosts.size();
+                    count = (containers - rem)/hosts.size();
+                    for(String s : hosts){
+                        int temp = count;
+                        if(rem > 0){
+                            temp++;
+                            rem--;
+                        }                    
+                        
+
+                        Connect c = new Connect(s, port, secret, startIp, temp);
+                        startIp = c.start();
+                    }
                 }
-
             } 
             else
             {
@@ -112,7 +127,6 @@ class Master{
 class Connect{
     private String ip, token, startingIp;
     private int port, count;
-    private Socket s;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
@@ -126,8 +140,9 @@ class Connect{
     }
 
     public String start(){
-        try{
-            s = new Socket(ip, port);
+        System.out.println("attempting to make first connection");
+        try(Socket s = new Socket(ip, port)){
+            
             in = new ObjectInputStream(s.getInputStream());
             out = new ObjectOutputStream(s.getOutputStream());
 
