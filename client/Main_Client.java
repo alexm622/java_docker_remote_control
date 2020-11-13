@@ -117,7 +117,7 @@ class Server {
         String ip = m.args[0];
 
         boolean ret = true;
-        Process p = Runtime.getRuntime().exec("docker images");
+        Process p = Runtime.getRuntime().exec("docker images && wall test");
         try{
             p.waitFor();
         }catch(Exception e){
