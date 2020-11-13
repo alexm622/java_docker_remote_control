@@ -142,19 +142,23 @@ class Connect{
     public String start(){
         System.out.println("attempting to make first connection");
         try(Socket s = new Socket(ip, port)){
-            System.out.println("connection accepted");
-            in = new ObjectInputStream(s.getInputStream());
+            if(s.isConnected()){
+                System.out.println("connection accepted");
+            }
+            System.out.println("getting output stream");
             out = new ObjectOutputStream(s.getOutputStream());
-
+            System.out.println("got output stream");
             
             System.out.println("sending first message");
             out.writeObject(new Message(Operation.LOGIN, new String[]{token}));
             System.out.println("message sent");
+            in = new ObjectInputStream(s.getInputStream());
             Message m = (Message) in.readObject();
             if(m.o == Operation.FAIL){
                 throw new Error();
             }
             String temp = startingIp;
+            
             for(int i = 0; i < count; i++){
                 out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
                 m = (Message) in.readObject();
@@ -162,7 +166,9 @@ class Connect{
                 if(m.o == Operation.FAIL){
                     throw new Error();
                 }
+                System.out.println("temp is " + temp);
                 temp = Utils.nextIp(temp);
+                System.out.println("next ip is " + temp);
             }
             out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
             s.close();
