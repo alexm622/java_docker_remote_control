@@ -117,17 +117,13 @@ class Server {
         String ip = m.args[0];
 
         boolean ret = true;
-        Process p = Runtime.getRuntime().exec("docker images && wall test");
-        try{
-            p.waitFor();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
         String cmd = create.replaceAll(Pattern.quote("$1"), ip);
-        Process process = Runtime.getRuntime().exec(cmd);
+        String[] exec = new String[] {"sh", "-c", cmd};
+        Runtime rt = Runtime.getRuntime();
+        Process pr = rt.exec(exec);
         System.out.println("the command is" + cmd);
         try{
-            process.waitFor();
+            pr.waitFor();
         }catch(Exception e){
             e.printStackTrace();
         }
