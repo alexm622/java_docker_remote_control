@@ -104,8 +104,11 @@ class Server {
                             status(m);
                             break;
                         case DESTROY:
-                            if(destroy()){oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));}
-                            else{oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));}
+                            oi = new ObjectInputStream(client.getInputStream());
+                            oo = new ObjectOutputStream(client.getOutputStream());
+                            destroy();
+                            oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));
+                            //oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));
                             break;
                         default:
                             break;
@@ -146,7 +149,11 @@ class Server {
         Runtime rt = Runtime.getRuntime();
         Process pr = rt.exec(exec);
         System.out.println("the command is " + cmd);
-        
+        try{
+            pr.waitFor();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return true;
     }
 }

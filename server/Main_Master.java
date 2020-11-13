@@ -222,7 +222,6 @@ class Connect{
                 System.out.println("next ip is " + temp);
             }
             out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
-            s.close();
             return temp;
 
         }catch(Exception e){
@@ -266,11 +265,11 @@ class Destroy{
             System.out.println("sending destroy message");
             out.writeObject(new Message(Operation.DESTROY, new String[]{"none"}));
             System.out.println("message sent");
-            in = new ObjectInputStream(s.getInputStream());
             m = (Message) in.readObject();
             if(m.o == Operation.FAIL){
                 throw new Error();
             }
+            out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
         }catch(Exception e){
             e.printStackTrace();
         }
