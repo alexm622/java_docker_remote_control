@@ -104,7 +104,8 @@ class Server {
                             status(m);
                             break;
                         case DESTROY:
-                            destroy();
+                            if(destroy()){oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));}
+                            else{oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));}
                             break;
                         default:
                             break;
@@ -139,7 +140,7 @@ class Server {
         throw new UnsupportedOperationException();
     }
 
-    private void destroy() throws IOException {
+    private boolean destroy() throws IOException {
         String cmd = destroy;
         String[] exec = new String[] {"sh", "-c", cmd};
         Runtime rt = Runtime.getRuntime();
@@ -150,6 +151,7 @@ class Server {
         }catch(Exception e){
             e.printStackTrace();
         }
+        return true;
     }
 }
 
