@@ -121,7 +121,12 @@ class Server {
         String cmd = create.replaceAll(Pattern.quote("$1"), ip);
         Process process = Runtime.getRuntime().exec(cmd);
         System.out.println("the command is" + cmd);
-        process.waitFor();
+        try{
+            process.waitFor();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
         
         return true;
     }
