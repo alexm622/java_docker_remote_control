@@ -3,6 +3,9 @@
 import java.net.*;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+
+
 import java.io.*;
 
 class Master{
@@ -140,6 +143,7 @@ class Master{
             else
             {
                 System.out.println("format should be: [server list file path] [starting ip] [number of containers] [secret token] [port]"); 
+                System.out.println("or: destroy [server list file path] [secret token] [port]"); 
                 throw new Error();
             }
         }finally{
@@ -206,7 +210,7 @@ class Connect extends Thread{
             }
             String temp = startingIp;
             
-            for(int i = 0; i <= count; i++){
+            for(int i = 0; i < count; i++){
                 out.writeObject(new Message(Operation.CREATE, new String[]{temp}));
                 m = (Message) in.readObject();
                 System.out.println(m.args[0]);
@@ -221,8 +225,7 @@ class Connect extends Thread{
                 System.out.println("next ip is " + temp);
             }
             out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
-            
-            
+
 
         }catch(Exception e){
             e.printStackTrace();
@@ -263,13 +266,15 @@ class Destroy{
             }
 
             System.out.println("sending destroy message");
+            
             out.writeObject(new Message(Operation.DESTROY, new String[]{"none"}));
             System.out.println("message sent");
-            in = new ObjectInputStream(s.getInputStream());
+
             m = (Message) in.readObject();
             if(m.o == Operation.FAIL){
                 throw new Error();
             }
+            out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -285,22 +290,26 @@ class Utils{
     public static String nextIp(String ip){
         System.out.println("ip is " + ip);
         String[] bytes = ip.split(Pattern.quote("."));
-        System.out.println("bytes length " + bytes.length);
-        byte b = (byte) Integer.parseInt(bytes[3]);
+        
+        int b =  Integer.parseInt(bytes[3]);
+        
         b++;
-        if(b == 0){
-            bytes[3] = Byte.toString(b);
-            b = (byte) Integer.parseInt(bytes[2]);
+        bytes[3] = Integer.toString(b);
+        if(b >= 256){
+            bytes[3] = Integer.toString(0);
+            b =  Integer.parseInt(bytes[2]);
             b++;
-            if(b == 0){
-                bytes[2] = Byte.toString(b);
-                b = (byte) Integer.parseInt(bytes[1]);
+            bytes[2] = Integer.toString(b);
+            if(b >= 256){
+                bytes[2] = Integer.toString(0);
+                b =   Integer.parseInt(bytes[1]);
                 b++;
-                if(b == 0){
-                    bytes[1] = Byte.toString(b);
-                    b = (byte) Integer.parseInt(bytes[1]);
+                bytes[1] = Integer.toString(b);
+                if(b >= 256){
+                    bytes[1] = Integer.toString(0);
+                    b =  Integer.parseInt(bytes[1]);
                     b++;
-                    bytes[0] = Byte.toString(b);
+                    bytes[0] = Integer.toString(b);
                 }
             }
         }

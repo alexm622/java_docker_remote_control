@@ -104,8 +104,9 @@ class Server {
                             status(m);
                             break;
                         case DESTROY:
-                            if(destroy()){oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));}
-                            else{oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));}
+                            destroy();
+                            System.out.println("destroyed");
+                            oo.writeObject(new Message(Operation.SUCCESS, new String[]{"DESTROYED"}));
                             break;
                         default:
                             break;
@@ -125,7 +126,7 @@ class Server {
         String[] exec = new String[] {"sh", "-c", cmd};
         Runtime rt = Runtime.getRuntime();
         Process pr = rt.exec(exec);
-        System.out.println("the command is" + cmd);
+        System.out.println("the command is " + cmd);
         try{
             pr.waitFor();
         }catch(Exception e){
@@ -145,12 +146,8 @@ class Server {
         String[] exec = new String[] {"sh", "-c", cmd};
         Runtime rt = Runtime.getRuntime();
         Process pr = rt.exec(exec);
-        System.out.println("the command is" + cmd);
-        try{
-            pr.waitFor();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        System.out.println("the command is " + cmd);
+        
         return true;
     }
 }
