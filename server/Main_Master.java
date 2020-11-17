@@ -132,7 +132,8 @@ class Master{
                         
 
                         Connect c = new Connect(s, port, secret, startIp, temp);
-                        startIp = c.start();
+                        c.start();
+                        startIp = Utils.nextIp(startIp, temp);
                     }
                 }
             } 
@@ -168,7 +169,7 @@ class Master{
 
 }
 
-class Connect{
+class Connect extends Thread{
     private String ip, token, startingIp;
     private int port, count;
     private ObjectInputStream in;
@@ -183,7 +184,9 @@ class Connect{
         
     }
 
-    public String start(){
+
+    @Override
+    public void run(){
         System.out.println("attempting to make first connection");
         try(Socket s = new Socket(ip, port)){
             if(s.isConnected()){
@@ -218,13 +221,13 @@ class Connect{
                 System.out.println("next ip is " + temp);
             }
             out.writeObject(new Message(Operation.DISCONNECT, new String[]{""}));
-            s.close();
-            return temp;
+            
+            
 
         }catch(Exception e){
             e.printStackTrace();
         }
-        return startingIp;
+        
         
     }
 }
@@ -310,6 +313,14 @@ class Utils{
         sb.append(".");
         sb.append(bytes[3]);
         return sb.toString();
+    }
+
+    public static String nextIp(String ip, int count){
+        String out = ip;
+        for(int i = 0; i <= count; i++){
+            out = nextIp(out);
+        }
+        return out;
     }
 }
 
