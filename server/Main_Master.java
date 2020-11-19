@@ -218,9 +218,7 @@ class Connect extends Thread{
                     throw new Error();
                 }
                 System.out.println("temp is " + temp);
-                if(i == count){
-                    break;
-                }
+                
                 temp = Utils.nextIp(temp);
                 System.out.println("next ip is " + temp);
             }
@@ -326,7 +324,7 @@ class Utils{
 
     public static String nextIp(String ip, int count){
         String out = ip;
-        for(int i = 0; i <= count; i++){
+        for(int i = 0; i < count; i++){
             out = nextIp(out);
         }
         return out;

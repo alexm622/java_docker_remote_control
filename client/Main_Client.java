@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.regex.Pattern;
 
 class Main {
@@ -63,7 +64,7 @@ class Main {
 class Server {
     private int port;
     private String token;
-    final String create = "docker run --net=pub_net -d --ip=$1 --hostname=\"$1\"  --name=\"remote-$1\" --rm alexm622/remote-desktop:1.0 ";
+    final String create = "docker run --net=pub_net -d --ip=$1 --hostname=\"$1\"  --name=\"remote-$1\" --rm alexm622/remote-desktop:1.0 --memory=256M";
     final String destroy = "docker container stop $(docker container ls -q --filter name=remote*)";
     public Server(int port, String token) {
         this.port = port;
@@ -88,28 +89,34 @@ class Server {
                     oo.writeObject(new Message(Operation.SUCCESS, new String[]{"proper token entered"}));
                 }
 
+                
                 while(!client.isClosed()){
-                    m = (Message) oi.readObject();
-                    switch (m.o) {
-                        case CREATE:
-                            System.out.println("attempting to create");
-                            if(create(m)) {oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));}
-                            else{oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));}
-                            break;
-                        case DISCONNECT:
-                            System.out.println("disconnecting");
-                            client.close();
-                            break;
-                        case STATUS:
-                            status(m);
-                            break;
-                        case DESTROY:
-                            destroy();
-                            System.out.println("destroyed");
-                            oo.writeObject(new Message(Operation.SUCCESS, new String[]{"DESTROYED"}));
-                            break;
-                        default:
-                            break;
+                    try{
+                        m = (Message) oi.readObject();
+                        switch (m.o) {
+                            case CREATE:
+                                System.out.println("attempting to create");
+                                if(create(m)) {oo.writeObject(new Message(Operation.SUCCESS, new String[]{"created successfully"}));}
+                                else{oo.writeObject(new Message(Operation.FAIL, new String[]{"invalid token"}));}
+                                break;
+                            case DISCONNECT:
+                                System.out.println("disconnecting");
+                                client.close();
+                                break;
+                            case STATUS:
+                                status(m);
+                                break;
+                            case DESTROY:
+                                destroy();
+                                System.out.println("destroyed");
+                                oo.writeObject(new Message(Operation.SUCCESS, new String[]{"DESTROYED"}));
+                                break;
+                            default:
+                                break;
+                        }
+                    }catch(SocketException e){
+                        destroy();
+                        client.close();
                     }
                 }
             }
