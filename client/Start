@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo /usr/bin/java -jar Client.jar secret 0

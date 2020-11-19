@@ -1,0 +1,16 @@
+[Unit]
+Description=Java Cluster Client Service
+[Service]
+User=ubuntu
+
+WorkingDirectory=/home/server/rdp_script/client/
+
+ExecStart=/home/server/rdp_script/client/Start
+
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
