@@ -5,7 +5,7 @@ Description=Java Cluster Client Service
 
 WorkingDirectory=/home/server/rdp_script/client/
 
-ExecStart=/home/server/rdp_script/client/Start
+ExecStart=/bin/sh /home/server/rdp_script/client/Start
 
 SuccessExitStatus=143
 TimeoutStopSec=10
